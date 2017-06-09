@@ -1,6 +1,7 @@
 # geostezkaBrandys
-### stav 1.6. - testovano - funkcni - vypis uloh na nastence, vypisovani zadani pri pristupu do ulohy
-### plan pokracovani 1.6. 17:00
+###
+### verze z 8.6. -  Nacitani uloh z uri (z QR kodu), zacatek quiz activity, zmeny Tasku - pridan string uri, optimalizace camtask objektu
+### verze z 4.6. - funkcni - zakladni verze aktivity drag and drop, dodelat pozicovani + overovani
 
 #### Pokracovat v configu
 #### Dodelat specificke tridy (dragdropTask, quizTask, ARTask) + prislusne aktivity
