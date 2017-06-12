@@ -3,6 +3,7 @@ package cz.cuni.pedf.vovap.jirsak.geostezka.utils;
 
 import android.graphics.Point;
 
+import cz.cuni.pedf.vovap.jirsak.geostezka.tasks.ArTask;
 import cz.cuni.pedf.vovap.jirsak.geostezka.tasks.CamTask;
 import cz.cuni.pedf.vovap.jirsak.geostezka.tasks.DragDropTask;
 import cz.cuni.pedf.vovap.jirsak.geostezka.R;
@@ -83,7 +84,8 @@ public class Config {
                                     "B) Uvidime jak to dopadne",
                                     "C) Uvidime jak to dopadne",
                                     "D) Uvidime jak to dopadne"},
-                    "http://5")
+                    "http://5"),
+			new ArTask(6, TYP_ULOHY_AR, "Konvička AR", "Namiřte na kameny a koukejte na konvičku.", "http://ARtest")
     } ;
 
 

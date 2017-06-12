@@ -8,8 +8,8 @@ import cz.cuni.pedf.vovap.jirsak.geostezka.utils.Task;
 
 public class ArTask extends Task {
 
-	public ArTask(int id, int typ, String nazev, String zadani) {
-		super(id, typ, nazev, zadani);
+	public ArTask(int id, int typ, String nazev, String zadani, String uri) {
+		super(id, typ, nazev, zadani, uri);
 	}
 
 	public void setTargets() {
