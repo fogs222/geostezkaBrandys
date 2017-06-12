@@ -41,6 +41,9 @@
         <activity android:name=".QRReadActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".TaskQuizActivity"></activity>
+
+        <activity
+            android:name=".TaskARTestActivity"/>
     </application>
 
 </manifest>

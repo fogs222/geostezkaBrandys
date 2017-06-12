@@ -413,14 +413,13 @@ public abstract class BaseArTaskActivity extends FragmentActivity implements ArV
 		@Override
 		public boolean onDown(MotionEvent e) {
 			showDebugMsg("Source: " + e.getSource() + " | Y: " + e.getAxisValue(MotionEvent.AXIS_Y));
-			//debugTw.setText("onDown");
 			return true;
 		}
 
 
 		@Override
 		public boolean onSingleTapUp(MotionEvent e) {
-			showDebugMsg("Y: " + e.getY());
+			showDebugMsg("singleTapUp Y: " + e.getY());
 			// Generates a Handler to trigger autofocus
 			// after 1 second
 			autofocusHandler.postDelayed(new Runnable() {
@@ -442,12 +441,12 @@ public abstract class BaseArTaskActivity extends FragmentActivity implements ArV
 		if(debugTw.isEnabled()) {
 			debugTw.setTag((int) debugTw.getTag() + 1);
 			if(Thread.currentThread() == Looper.getMainLooper().getThread()) {
-				debugTw.setText(debugTw.getTag() + "|" + msg + "\n" + debugTw.getText());
+				debugTw.setText(debugTw.getTag() + "| " + msg + "\n" + debugTw.getText());
 			}else {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						debugTw.setText(debugTw.getTag() + "|" + msg + "\n" + debugTw.getText());
+						debugTw.setText(debugTw.getTag() + "| " + msg + "\n" + debugTw.getText());
 					}
 				});
 			}
