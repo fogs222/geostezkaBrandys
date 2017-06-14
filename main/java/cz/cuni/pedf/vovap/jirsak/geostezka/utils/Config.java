@@ -1,13 +1,25 @@
 package cz.cuni.pedf.vovap.jirsak.geostezka.utils;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.os.Looper;
+import android.preference.PreferenceManager;
+import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
+import cz.cuni.pedf.vovap.jirsak.geostezka.SettingsActivity;
 import cz.cuni.pedf.vovap.jirsak.geostezka.tasks.ArTask;
 import cz.cuni.pedf.vovap.jirsak.geostezka.tasks.CamTask;
 import cz.cuni.pedf.vovap.jirsak.geostezka.tasks.DragDropTask;
 import cz.cuni.pedf.vovap.jirsak.geostezka.R;
 import cz.cuni.pedf.vovap.jirsak.geostezka.tasks.QuizTask;
+
+import static com.google.android.gms.internal.zzir.runOnUiThread;
 
 public class Config {
 
@@ -15,6 +27,9 @@ public class Config {
     public static final int TYP_ULOHY_DRAGDROP = 2;
     public static final int TYP_ULOHY_QUIZ = 3;
     public static final int TYP_ULOHY_AR = 4;
+
+	private static Boolean DEBUG_MODE = null;
+
 /*
     /// Vyvoreni staticke tridy uvnitr configu - tyto tridy by mohly byt samozrejme samostatne mimo config
     public static class Uloha {
@@ -114,5 +129,50 @@ public class Config {
     {
         return SEZNAM_ULOH.length;
     }
+
+
+	public static TextView getDebugTw(Context c) {
+		TextView tw = new TextView(c);
+		tw.setIncludeFontPadding(false);
+		tw.setBackgroundColor(Color.DKGRAY);
+		tw.setTextColor(Color.WHITE);
+		tw.setVerticalScrollBarEnabled(true);
+		tw.setMovementMethod(new ScrollingMovementMethod());
+		tw.setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
+		//tw.setTag(0);
+		return tw;
+	}
+
+	public static void showDebugMsg(final TextView tw, final String msg, Context c) {
+		if(jeDebugOn(c)) {
+			//if (tw.isEnabled()) {
+				//tw.setTag((int) tw.getTag() + 1);
+				if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
+					//tw.setText(tw.getTag() + "| " + msg + "\n" + tw.getText());
+					tw.setText(msg + "\n" + tw.getText());
+				} else {
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							//tw.setText(tw.getTag() + "| " + msg + "\n" + tw.getText());
+							tw.setText(msg + "\n" + tw.getText());
+						}
+					});
+				}
+			//}
+		}
+	}
+
+	public static boolean jeDebugOn(Context c) {
+		if(DEBUG_MODE == null) {
+			SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
+			DEBUG_MODE = sp.getBoolean("pref_debug", false);
+		}
+		return DEBUG_MODE;
+	}
+
+	public static void nastavDebugMode(boolean stav, Context c) {
+		DEBUG_MODE = stav;
+	}
 
 }
