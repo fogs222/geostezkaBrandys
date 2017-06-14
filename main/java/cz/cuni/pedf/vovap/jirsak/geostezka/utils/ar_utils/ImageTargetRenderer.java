@@ -69,7 +69,8 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, ArVuforiaApp
 	private boolean mIsActive = false;
 	private boolean mModelIsLoaded = false;
 
-	private static final float OBJECT_SCALE_FLOAT = 0.003f;
+	private float objectScaleFloat = 0.003f;
+	private float objectRotateFloat = 0;
 
 
 	public ImageTargetRenderer(BaseArTaskActivity activity, ArVuforiaApplicationSession session) {
@@ -99,6 +100,30 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, ArVuforiaApp
 			mSampleAppRenderer.configureVideoBackground();
 	}
 
+	public void zoomInObject() {
+		if(objectScaleFloat < 0.006) {
+			objectScaleFloat += 0.0002f;
+		}
+	}
+
+	public void zoomOutObject() {
+		if(objectScaleFloat > 0.0008) {
+			objectScaleFloat -= 0.0002f;
+		}
+	}
+
+	public void rotateObjectLeft() {
+		if(objectRotateFloat <= 0) {
+			objectRotateFloat = 360.0f;
+		}
+		objectRotateFloat -= 10.0f;
+	}
+	public void rotateObjectRight() {
+		if(objectRotateFloat >= 360.0f) {
+			objectRotateFloat = 0;
+		}
+		objectRotateFloat += 10.0f;
+	}
 
 	// Called when the surface is created or recreated.
 	@Override
@@ -200,22 +225,24 @@ public class ImageTargetRenderer implements GLSurfaceView.Renderer, ArVuforiaApp
 		for (int tIdx = 0; tIdx < state.getNumTrackableResults(); tIdx++) {
 			TrackableResult result = state.getTrackableResult(tIdx);
 			Trackable trackable = result.getTrackable();
-			printUserData(trackable);
-			Matrix44F modelViewMatrix_Vuforia = Tool
-					.convertPose2GLMatrix(result.getPose());
+			//printUserData(trackable);
+			Matrix44F modelViewMatrix_Vuforia = Tool.convertPose2GLMatrix(result.getPose());
 			float[] modelViewMatrix = modelViewMatrix_Vuforia.getData();
 
 			int textureIndex = trackable.getName().equalsIgnoreCase("stones") ? 0 : 1;
 			textureIndex = trackable.getName().equalsIgnoreCase("tarmac") ? 2 : textureIndex;
 
-			mActivity.showDebugMsg(trackable.getName());
+			//mActivity.showDebugMsg(trackable.getName());
 
 			// deal with the modelview and projection matrices
 			float[] modelViewProjection = new float[16];
 
 			if (!mActivity.isExtendedTrackingActive()) {
-				Matrix.translateM(modelViewMatrix, 0, 0.0f, 0.0f, OBJECT_SCALE_FLOAT);
-				Matrix.scaleM(modelViewMatrix, 0, OBJECT_SCALE_FLOAT, OBJECT_SCALE_FLOAT, OBJECT_SCALE_FLOAT);
+				//Matrix.translateM(modelViewMatrix, 0, 0.0f, 0.0f, objectScaleFloat);
+				Matrix.translateM(modelViewMatrix, 0, 0.0f, 0.0f, objectScaleFloat);
+				Matrix.scaleM(modelViewMatrix, 0, objectScaleFloat, objectScaleFloat, objectScaleFloat);
+				/// rotate based on gestures
+				Matrix.rotateM(modelViewMatrix, 0, objectRotateFloat, 0, 0, 1.0f);
 			} else {
 				Matrix.rotateM(modelViewMatrix, 0, 90.0f, 1.0f, 0, 0);
 				Matrix.scaleM(modelViewMatrix, 0, kBuildingScale, kBuildingScale, kBuildingScale);

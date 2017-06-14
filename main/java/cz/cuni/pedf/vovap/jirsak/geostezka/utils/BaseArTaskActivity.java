@@ -90,7 +90,9 @@ public abstract class BaseArTaskActivity extends FragmentActivity implements ArV
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		debugTw = getDebugTw();
+		if(Config.jeDebugOn(this.getBaseContext())) {
+			debugTw = Config.getDebugTw(this);
+		}
 		baseArActivitySession = new ArVuforiaApplicationSession(this);
 	}
 
@@ -336,9 +338,10 @@ public abstract class BaseArTaskActivity extends FragmentActivity implements ArV
 
 			baseMainUILayout = (LinearLayout) View.inflate(this, mainUILayoutId, null);
 
-			/// pridani debug TextView do main layoutu
-			baseMainUILayout.addView(debugTw, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200));
-
+			if(Config.jeDebugOn(this.getBaseContext())) {
+				/// pridani debug TextView do main layoutu
+				baseMainUILayout.addView(debugTw, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200));
+			}
 			/// pridani overlay view
 			baseMainUILayout.addView(baseGlView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 			addContentView(baseMainUILayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -412,10 +415,9 @@ public abstract class BaseArTaskActivity extends FragmentActivity implements ArV
 
 		@Override
 		public boolean onDown(MotionEvent e) {
-			showDebugMsg("Source: " + e.getSource() + " | Y: " + e.getAxisValue(MotionEvent.AXIS_Y));
+			//showDebugMsg("Source: " + e.getSource() + " | Y: " + e.getAxisValue(MotionEvent.AXIS_Y));
 			return true;
 		}
-
 
 		@Override
 		public boolean onSingleTapUp(MotionEvent e) {
@@ -434,35 +436,33 @@ public abstract class BaseArTaskActivity extends FragmentActivity implements ArV
 
 			return true;
 		}
-	}
 
-	public void showDebugMsg(final String msg) {
-		Log.d(LOGTAG, "DEBUG: " + msg);
-		if(debugTw.isEnabled()) {
-			debugTw.setTag((int) debugTw.getTag() + 1);
-			if(Thread.currentThread() == Looper.getMainLooper().getThread()) {
-				debugTw.setText(debugTw.getTag() + "| " + msg + "\n" + debugTw.getText());
-			}else {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						debugTw.setText(debugTw.getTag() + "| " + msg + "\n" + debugTw.getText());
-					}
-				});
+		@Override
+		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+			float diffX = e2.getX() - e1.getX();
+			float diffY = e2.getY() - e1.getY();
+			showDebugMsg("Dif Y: " + diffY + "  Dif X: " + diffX + "| distXY: " + distanceX + " | " + distanceY);
+			/// rotate
+			if(Math.abs(diffX) - Math.abs(diffY) > 50) {
+				if(distanceX > 0) {
+					baseRenderer.rotateObjectRight();
+				}else {
+					baseRenderer.rotateObjectLeft();
+				}
+			/// zoom
+			}else if(Math.abs(diffY) - Math.abs(diffX) > 50) {
+				if(distanceY > 0) {
+					baseRenderer.zoomInObject();
+				}else {
+					baseRenderer.zoomOutObject();
+				}
 			}
+			return false;
 		}
 	}
 
-	private TextView getDebugTw() {
-		TextView tw = new TextView(this);
-		tw.setText("DEBUG text view:");
-		tw.setIncludeFontPadding(false);
-		tw.setBackgroundColor(Color.DKGRAY);
-		tw.setTextColor(Color.WHITE);
-		tw.setVerticalScrollBarEnabled(true);
-		tw.setMovementMethod(new ScrollingMovementMethod());
-		tw.setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
-		tw.setTag(0);
-		return tw;
+	public void showDebugMsg(final String msg) {
+		Log.d(LOGTAG, "AR DEBUG msg: " + msg);
+		Config.showDebugMsg(debugTw, msg, this);
 	}
 }
